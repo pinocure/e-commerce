@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: ecommerce-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - node01
+      containers:
+        - name: api-gateway
+          image: pinocure717/ecommerce-api-gateway:latest
+          ports:
+            - containerPort: 8090
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_ID
+              value: "balance-service"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_0_URI
+              value: "http://balance-service.ecommerce-app.svc.cluster.local:8081"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_ID
+              value: "coupon-service"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_1_URI
+              value: "http://coupon-service.ecommerce-app.svc.cluster.local:8082"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_ID
+              value: "order-service"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_2_URI
+              value: "http://order-service.ecommerce-app.svc.cluster.local:8080"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_ID
+              value: "product-service"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_3_URI
+              value: "http://product-service.ecommerce-app.svc.cluster.local:8083"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_ID
+              value: "user-service"
+            - name: SPRING_CLOUD_GATEWAY_ROUTES_4_URI
+              value: "http://user-service.ecommerce-app.svc.cluster.local:8084"
