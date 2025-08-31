@@ -8,8 +8,6 @@ COPY gradle gradle/
 COPY build.gradle .
 COPY settings.gradle .
 
-COPY common common/
-
 COPY user-service user-service/
 
 RUN chmod +x gradlew
