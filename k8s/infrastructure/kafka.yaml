@@ -79,15 +79,9 @@ spec:
             timeoutSeconds: 3
             successThreshold: 1
             failureThreshold: 3
-  volumeClaimTemplates:
-    - metadata:
-        name: zookeeper-data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 5Gi
-        storageClassName: standard
+      volumes:
+        - name: zookeeper-data
+          emptyDir: {}
 
 ---
 apiVersion: v1
@@ -196,15 +190,9 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "100m"
-  volumeClaimTemplates:
-    - metadata:
-        name: kafka-data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 10Gi
-        storageClassName: standard
+      volumes:
+        - name: kafka-data
+          emptyDir: {}
 
 ---
 apiVersion: batch/v1
