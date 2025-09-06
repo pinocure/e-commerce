@@ -40,3 +40,17 @@ spec:
               value: "redis-service.ecommerce-infra.svc.cluster.local"
             - name: SPRING_REDIS_PORT
               value: "6379"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka.ecommerce-infra.svc.cluster.local:9092"
+            - name: SPRING_KAFKA_PRODUCER_KEY_SERIALIZER
+              value: "org.apache.kafka.common.serialization.StringSerializer"
+            - name: SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER
+              value: "org.springframework.kafka.support.serializer.JsonSerializer"
+            - name: SPRING_KAFKA_CONSUMER_GROUP_ID
+              value: "product-service-group"
+            - name: SPRING_KAFKA_CONSUMER_KEY_DESERIALIZER
+              value: "org.apache.kafka.common.serialization.StringDeserializer"
+            - name: SPRING_KAFKA_CONSUMER_VALUE_DESERIALIZER
+              value: "org.springframework.kafka.support.serializer.JsonDeserializer"
+            - name: SPRING_KAFKA_CONSUMER_PROPERTIES_SPRING_JSON_TRUSTED_PACKAGES
+              value: "*"
