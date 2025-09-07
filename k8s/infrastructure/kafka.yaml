@@ -104,7 +104,6 @@ data:
   KAFKA_LOG_RETENTION_HOURS: "168"
   KAFKA_LOG_SEGMENT_BYTES: "1073741824"
   KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: "300000"
-  KAFKA_LOG_DIRS: "/var/lib/kafka/data"
 
 ---
 apiVersion: v1
@@ -153,9 +152,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: kafka-config
-          volumeMounts:
-            - name: kafka-data
-              mountPath: /var/lib/kafka
           resources:
             requests:
               memory: "1Gi"
@@ -166,18 +162,18 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 9092
-            initialDelaySeconds: 60
-            periodSeconds: 10
-            timeoutSeconds: 5
+            initialDelaySeconds: 120  # 더 긴 대기 시간
+            periodSeconds: 30
+            timeoutSeconds: 10
             failureThreshold: 5
           readinessProbe:
             tcpSocket:
               port: 9092
-            initialDelaySeconds: 30
-            periodSeconds: 5
-            timeoutSeconds: 3
+            initialDelaySeconds: 60   # 더 긴 대기 시간
+            periodSeconds: 10
+            timeoutSeconds: 5
             successThreshold: 1
-            failureThreshold: 3
+            failureThreshold: 5
       initContainers:
         - name: wait-for-zookeeper
           image: busybox:1.35
@@ -192,25 +188,6 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "100m"
-        - name: setup-kafka-dirs
-          image: busybox:1.35
-          command:
-            - sh
-            - -c
-            - |
-              mkdir -p /var/lib/kafka/data
-              mkdir -p /var/lib/kafka/logs
-              chown -R 1000:1000 /var/lib/kafka
-              ls -la /var/lib/kafka/
-              echo "Kafka directories setup completed"
-          volumeMounts:
-            - name: kafka-data
-              mountPath: /var/lib/kafka
-          securityContext:
-            runAsUser: 0
-      volumes:
-        - name: kafka-data
-          emptyDir: {}
 
 ---
 apiVersion: batch/v1
