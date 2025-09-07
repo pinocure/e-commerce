@@ -92,18 +92,27 @@ metadata:
 data:
   KAFKA_BROKER_ID: "1"
   KAFKA_ZOOKEEPER_CONNECT: "zookeeper.ecommerce-infra.svc.cluster.local:2181"
+
   KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
-  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT"
   KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka.ecommerce-infra.svc.cluster.local:9092"
+  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT"
+
+  KAFKA_PORT: ""
+  KAFKA_HOST_NAME: ""
+
   KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
   KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
   KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+
   KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
   KAFKA_NUM_PARTITIONS: "3"
   KAFKA_DEFAULT_REPLICATION_FACTOR: "1"
+
   KAFKA_LOG_RETENTION_HOURS: "168"
   KAFKA_LOG_SEGMENT_BYTES: "1073741824"
   KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: "300000"
+
+  KAFKA_HEAP_OPTS: "-Xmx768m -Xms512m"
 
 ---
 apiVersion: v1
@@ -162,14 +171,14 @@ spec:
           livenessProbe:
             tcpSocket:
               port: 9092
-            initialDelaySeconds: 120  # 더 긴 대기 시간
+            initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 5
           readinessProbe:
             tcpSocket:
               port: 9092
-            initialDelaySeconds: 60   # 더 긴 대기 시간
+            initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 5
             successThreshold: 1
