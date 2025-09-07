@@ -16,6 +16,9 @@ spec:
       containers:
         - name: mysql
           image: mysql:8.0
+          args:
+            - "--bind-address=0.0.0.0"
+            - "--default-authentication-plugin=mysql_native_password"
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "root"
@@ -25,6 +28,8 @@ spec:
               value: "ruang"
             - name: MYSQL_PASSWORD
               value: "ruang"
+            - name: MYSQL_ROOT_HOST
+              value: "%"
           ports:
             - containerPort: 3306
           volumeMounts:
@@ -47,7 +52,6 @@ spec:
       targetPort: 3306
   type: ClusterIP
 
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -67,6 +71,9 @@ spec:
       containers:
         - name: mysql
           image: mysql:8.0
+          args:
+            - "--bind-address=0.0.0.0"
+            - "--default-authentication-plugin=mysql_native_password"
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "root"
@@ -76,6 +83,8 @@ spec:
               value: "ruang"
             - name: MYSQL_PASSWORD
               value: "ruang"
+            - name: MYSQL_ROOT_HOST
+              value: "%"
           ports:
             - containerPort: 3306
           volumeMounts:
@@ -98,7 +107,6 @@ spec:
       targetPort: 3306
   type: ClusterIP
 
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -118,6 +126,9 @@ spec:
       containers:
         - name: mysql
           image: mysql:8.0
+          args:
+            - "--bind-address=0.0.0.0"
+            - "--default-authentication-plugin=mysql_native_password"
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "root"
@@ -127,6 +138,8 @@ spec:
               value: "ruang"
             - name: MYSQL_PASSWORD
               value: "ruang"
+            - name: MYSQL_ROOT_HOST
+              value: "%"
           ports:
             - containerPort: 3306
           volumeMounts:
@@ -149,7 +162,6 @@ spec:
       targetPort: 3306
   type: ClusterIP
 
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -169,6 +181,9 @@ spec:
       containers:
         - name: mysql
           image: mysql:8.0
+          args:
+            - "--bind-address=0.0.0.0"
+            - "--default-authentication-plugin=mysql_native_password"
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "root"
@@ -178,6 +193,8 @@ spec:
               value: "ruang"
             - name: MYSQL_PASSWORD
               value: "ruang"
+            - name: MYSQL_ROOT_HOST
+              value: "%"
           ports:
             - containerPort: 3306
           volumeMounts:
@@ -200,7 +217,6 @@ spec:
       targetPort: 3306
   type: ClusterIP
 
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -220,6 +236,9 @@ spec:
       containers:
         - name: mysql
           image: mysql:8.0
+          args:
+            - "--bind-address=0.0.0.0"
+            - "--default-authentication-plugin=mysql_native_password"
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: "root"
@@ -229,6 +248,8 @@ spec:
               value: "ruang"
             - name: MYSQL_PASSWORD
               value: "ruang"
+            - name: MYSQL_ROOT_HOST
+              value: "%"
           ports:
             - containerPort: 3306
           volumeMounts:
@@ -237,16 +258,3 @@ spec:
       volumes:
         - name: mysql-storage
           emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql-user-service
-  namespace: ecommerce-infra
-spec:
-  selector:
-    app: mysql-user
-  ports:
-    - port: 3306
-      targetPort: 3306
-  type: ClusterIP
