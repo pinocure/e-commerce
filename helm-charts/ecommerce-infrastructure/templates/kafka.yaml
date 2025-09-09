@@ -6,15 +6,23 @@ metadata:
 data:
   KAFKA_BROKER_ID: "1"
   KAFKA_ZOOKEEPER_CONNECT: "zookeeper.{{ .Values.global.namespace }}.svc.cluster.local:{{ .Values.zookeeper.port }}"
-  KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka.{{ .Values.global.namespace }}.svc.cluster.local:{{ .Values.kafka.port }}"
   KAFKA_LISTENERS: "PLAINTEXT://0.0.0.0:{{ .Values.kafka.port }}"
+  KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka.{{ .Values.global.namespace }}.svc.cluster.local:{{ .Values.kafka.port }}"
   KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT"
   KAFKA_INTER_BROKER_LISTENER_NAME: "PLAINTEXT"
+  KAFKA_PORT: ""
+  KAFKA_HOST_NAME: ""
   KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
   KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
   KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
   KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
   KAFKA_DELETE_TOPIC_ENABLE: "true"
+  KAFKA_NUM_PARTITIONS: "3"
+  KAFKA_DEFAULT_REPLICATION_FACTOR: "1"
+  KAFKA_LOG_RETENTION_HOURS: "168"
+  KAFKA_LOG_SEGMENT_BYTES: "1073741824"
+  KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: "300000"
+  KAFKA_HEAP_OPTS: "-Xmx768m -Xms512m"
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -69,6 +77,13 @@ spec:
             - 'sh'
             - '-c'
             - 'until nc -z zookeeper.{{ .Values.global.namespace }}.svc.cluster.local {{ .Values.zookeeper.port }}; do echo "Waiting for Zookeeper..."; sleep 5; done; echo "Zookeeper is ready!"'
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
 ---
 apiVersion: v1
 kind: Service
