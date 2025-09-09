@@ -64,8 +64,22 @@ spec:
             - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_4_PREDICATES_0
               value: "Path=/users/**"
             {{- else }}
+            {{- if eq $serviceName "balance-service" }}
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:mysql://mysql-{{ $service.name }}.ecommerce-infra.svc.cluster.local:3306/{{ $serviceName }}_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+              value: "jdbc:mysql://mysql-balance-service.ecommerce-infra.svc.cluster.local:3306/balance_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+            {{- else if eq $serviceName "coupon-service" }}
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-coupon-service.ecommerce-infra.svc.cluster.local:3306/coupon_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+            {{- else if eq $serviceName "order-service" }}
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-order-service.ecommerce-infra.svc.cluster.local:3306/order_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+            {{- else if eq $serviceName "product-service" }}
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-product-service.ecommerce-infra.svc.cluster.local:3306/product_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+            {{- else if eq $serviceName "user-service" }}
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-user-service.ecommerce-infra.svc.cluster.local:3306/user_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+            {{- end }}
             - name: SPRING_DATASOURCE_USERNAME
               value: "ruang"
             - name: SPRING_DATASOURCE_PASSWORD
