@@ -1,0 +1,102 @@
+{{- range $serviceName, $service := .Values.services }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $service.name }}
+  namespace: {{ $.Values.global.namespace.app }}
+spec:
+  replicas: {{ $service.replicas }}
+  selector:
+    matchLabels:
+      app: {{ $service.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $service.name }}
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - {{ $service.nodeAffinity }}
+      containers:
+        - name: {{ $service.name }}
+          image: {{ $service.image }}
+          ports:
+            - containerPort: {{ $service.port }}
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
+            {{- if eq $serviceName "api-gateway" }}
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_ID
+              value: "balance-service"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_URI
+              value: "http://balance-service.ecommerce-app.svc.cluster.local:8081"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_PREDICATES_0
+              value: "Path=/balances/**"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_ID
+              value: "coupon-service"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_URI
+              value: "http://coupon-service.ecommerce-app.svc.cluster.local:8082"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_PREDICATES_0
+              value: "Path=/coupons/**"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_2_ID
+              value: "order-service"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_2_URI
+              value: "http://order-service.ecommerce-app.svc.cluster.local:8080"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_2_PREDICATES_0
+              value: "Path=/orders/**"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_3_ID
+              value: "product-service"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_3_URI
+              value: "http://product-service.ecommerce-app.svc.cluster.local:8083"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_3_PREDICATES_0
+              value: "Path=/products/**"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_4_ID
+              value: "user-service"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_4_URI
+              value: "http://user-service.ecommerce-app.svc.cluster.local:8084"
+            - name: SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_4_PREDICATES_0
+              value: "Path=/users/**"
+            {{- else }}
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-{{ $service.name }}.ecommerce-infra.svc.cluster.local:3306/{{ $serviceName }}_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "ruang"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "ruang"
+            - name: SPRING_REDIS_HOST
+              value: "redis-service.ecommerce-infra.svc.cluster.local"
+            - name: SPRING_REDIS_PORT
+              value: "6379"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka.ecommerce-infra.svc.cluster.local:9092"
+            - name: SPRING_KAFKA_PRODUCER_KEY_SERIALIZER
+              value: "org.apache.kafka.common.serialization.StringSerializer"
+            - name: SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER
+              value: "org.springframework.kafka.support.serializer.JsonSerializer"
+            - name: SPRING_KAFKA_CONSUMER_GROUP_ID
+              value: "{{ $serviceName }}-group"
+            - name: SPRING_KAFKA_CONSUMER_KEY_DESERIALIZER
+              value: "org.apache.kafka.common.serialization.StringDeserializer"
+            - name: SPRING_KAFKA_CONSUMER_VALUE_DESERIALIZER
+              value: "org.springframework.kafka.support.serializer.JsonDeserializer"
+            - name: SPRING_KAFKA_CONSUMER_PROPERTIES_SPRING_JSON_TRUSTED_PACKAGES
+              value: "*"
+            {{- if eq $serviceName "order-service" }}
+            - name: SERVICES_BALANCE_URL
+              value: "http://balance-service.ecommerce-app.svc.cluster.local:8081"
+            - name: SERVICES_COUPON_URL
+              value: "http://coupon-service.ecommerce-app.svc.cluster.local:8082"
+            - name: SERVICES_PRODUCT_URL
+              value: "http://product-service.ecommerce-app.svc.cluster.local:8083"
+            - name: SERVICES_USER_URL
+              value: "http://user-service.ecommerce-app.svc.cluster.local:8084"
+            {{- end }}
+            {{- end }}
+{{- end }}

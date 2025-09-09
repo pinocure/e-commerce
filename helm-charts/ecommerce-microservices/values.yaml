@@ -1,0 +1,47 @@
+global:
+  namespace:
+    app: ecommerce-app
+    infra: ecommerce-app
+
+services:
+  api-gateway:
+    name: api-gateway
+    image: pinocure717/ecommerce-api-gateway:latest
+    port: 8090
+    replicas: 2
+    nodeAffinity: node01
+
+  order-service:
+    name: order-service
+    image: pinocure717/ecommerce-order-service:latest
+    port: 8080
+    replicas: 2
+    nodeAffinity: node02
+
+  balance-service:
+    name: balance-service
+    image: pinocure717/ecommerce-balance-service:latest
+    port: 8081
+    replicas: 2
+    nodeAffinity: node01
+
+  coupon-service:
+    name: coupon-service
+    image: pinocure717/ecommerce-coupon-service:latest
+    port: 8082
+    replicas: 2
+    nodeAffinity: node02
+
+  product-service:
+    name: product-service
+    image: pinocure717/ecommerce-product-service:latest
+    port: 8083
+    replicas: 2
+    nodeAffinity: node02
+
+  user-service:
+    name: user-service
+    image: pinocure717/ecommerce-user-service:latest
+    port: 8084
+    replicas: 2
+    nodeAffinity: node01
